@@ -51,7 +51,8 @@ class Todo(QMainWindow):
 		self.db = 'todo.db'
 		self.connection = sqlite3.connect(self.db)
 		self.cursor = self.connection.cursor()
-
+		self.create_table()
+		
 		# ui
 		self.ui = Ui_MainWindow()
 		self.ui.setupUi(self)
@@ -71,6 +72,19 @@ class Todo(QMainWindow):
 		self.setFixedSize(500,500)
 		self.setWindowIcon(QtGui.QIcon('../tick.png'))
 
+
+	def create_table(self):
+		""" Creation The Task Table on data base """
+		query = """
+			CREATE TABLE IF NOT EXISTS Task(
+				id integer PRIMARY KEY,
+				title varchar(255) NOT NULL,
+				status boolean DEFAULT 0,
+				datetime timestamp
+			)
+		"""
+		self.cursor.execute(query)
+		self.connection.commit()
 
 
 	def get_task(self,id):
