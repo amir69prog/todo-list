@@ -2,7 +2,18 @@ import sqlite3
 import sys
 import datetime
 import time 
-from PyQt5.QtWidgets import QMainWindow,QLayout,QSizePolicy,QLabel,QApplication,QCheckBox,QListWidgetItem,QWidget,QHBoxLayout
+from PyQt5.QtWidgets import (
+	QMainWindow,
+	QLayout,
+	QSizePolicy,
+	QLabel,
+	QApplication,
+	QCheckBox,
+	QListWidgetItem,
+	QWidget,
+	QHBoxLayout,
+	QDesktopWidget
+)
 from PyQt5 import QtCore,QtGui
 from ui_mainwindow import Ui_MainWindow
 from ui_itemwidget import Ui_Form
@@ -259,9 +270,13 @@ class Todo(QMainWindow):
 	def item_clicked(self,item):
 		try:
 			self.task_window = TaskWindow(item)
+			fg = self.task_window.frameGeometry()
+			desktop_center = QDesktopWidget().availableGeometry().center() 
+			fg.moveCenter(desktop_center)
+			self.task_window.move(fg.topLeft())
 			self.task_window.show()
-		except:
-			pass
+		except Exception as err:
+			print(err)
 
 	def delete_task_db(self,task_id):
 		""" Delete task from databse """
