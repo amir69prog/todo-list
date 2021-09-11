@@ -75,7 +75,7 @@ class Ui_MainWindow(object):
         self.insert.setGeometry(QtCore.QRect(440, 60, 41, 41))
         self.insert.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("..\\icon_plus.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("..\\images\\icon_plus.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.insert.setIcon(icon)
         self.insert.setIconSize(QtCore.QSize(45, 45))
         self.insert.setObjectName("insert")

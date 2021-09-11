@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>457</width>
+    <height>148</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../images/icon_plus.png</normaloff>../images/icon_plus.png</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color:rgb(184, 184, 184)</string>
+  </property>
+  <widget class="QLineEdit" name="task">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>431</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color:transparent;
+border: 2px solid rgb(31, 31, 31) ;
+border-radius:20px;
+color:rgb(31, 31, 31);
+font: 12pt \&quot;Open Sans\&quot;;
+padding:5px;</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="done">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>100</y>
+     <width>31</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Done</string>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+	background-color:transparent;
+}
+QPushButton:hover{
+	border:2px solid rgb(31, 31, 31);	
+	border-radius:12px;
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>../images/tick.png</normaloff>../images/tick.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>25</width>
+     <height>25</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QTimeEdit" name="time">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>100</y>
+     <width>141</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color:transparent;
+border: 2px solid rgb(31, 31, 31) ;
+border-radius:10px;
+font: 12pt \&quot;Open Sans\&quot;;
+padding:5px;</string>
+   </property>
+  </widget>
+  <widget class="QDateEdit" name="date">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>100</y>
+     <width>131</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color:transparent;
+border: 2px solid rgb(31, 31, 31) ;
+border-radius:10px;
+font: 12pt \&quot;Open Sans\&quot;;
+padding:5px;</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="delete_2">
+   <property name="geometry">
+    <rect>
+     <x>310</x>
+     <y>100</y>
+     <width>31</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Delete</string>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+	background-color:transparent;
+}
+QPushButton:hover{
+	border:2px solid rgb(31, 31, 31);	
+	border-radius:12px;
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>../images/deleteed.png</normaloff>../images/deleteed.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>25</width>
+     <height>25</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="save">
+   <property name="geometry">
+    <rect>
+     <x>410</x>
+     <y>100</y>
+     <width>31</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Update</string>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton {
+	background-color:transparent;
+}
+QPushButton:hover{
+	border:2px solid rgb(31, 31, 31);	
+	border-radius:12px;
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>../images/save.png</normaloff>../images/save.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>25</width>
+     <height>25</height>
+    </size>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,10 +1,74 @@
-from PyQt5.QtWidgets import QMainWindow,QSizePolicy,QLabel,QApplication,QCheckBox,QListWidgetItem,QWidget,QHBoxLayout
-from ui_mainwindow import Ui_MainWindow
-from PyQt5 import QtCore,QtGui
 import sqlite3
 import sys
 import datetime
 import time 
+from PyQt5.QtWidgets import QMainWindow,QLayout,QSizePolicy,QLabel,QApplication,QCheckBox,QListWidgetItem,QWidget,QHBoxLayout
+from PyQt5 import QtCore,QtGui
+from ui_mainwindow import Ui_MainWindow
+from ui_itemwidget import Ui_Form
+
+
+class TaskWindow(QWidget):
+	def __init__(self,item):
+		super(TaskWindow,self).__init__()
+		self.ui = Ui_Form()
+		self.ui.setupUi(self)
+		self.item = item
+		self.task = todo_app.ui.list.itemWidget(self.item)
+		self.set_data()
+		self.settings()
+
+		# Signals
+		self.ui.delete_2.clicked.connect(self.delete)
+		self.ui.done.clicked.connect(self.done)
+		self.ui.save.clicked.connect(self.update)
+
+
+	def settings(self):
+		self.setFixedSize(457,148)
+
+
+	def get_date(self,date,format_):
+		""" Get the date from str """
+		datetime_ = datetime.datetime.strptime(date,format_)
+		return datetime_.date()
+
+
+	def get_time(self,date,format_):
+		""" Get the time from str """
+		datetime_ = datetime.datetime.strptime(date,format_)
+		return datetime_.time()
+
+
+	def set_data(self):
+		""" Set The Data in widgets """
+		self.ui.task.setText(self.task.title)
+		date = self.get_date(self.task.timestamp[:19],'%Y-%m-%d %H:%M:%S')
+		time = self.get_time(self.task.timestamp[:19],'%Y-%m-%d %H:%M:%S')
+		self.ui.time.setTime(QtCore.QTime(time))
+		self.ui.date.setDate(QtCore.QDate(date))
+
+
+	def delete(self):
+		""" Send request to remove and delete task """
+		self.hide()
+		todo_app.delete_task(self.item)
+
+
+	def done(self):
+		""" Done Task """
+		self.hide()
+		todo_app.done_task(self.task)
+
+
+	def update(self):
+		""" Update the Task's data """
+		self.hide()
+		title = self.ui.task.text()
+		time = self.ui.time.time()
+		date = self.ui.date.date()
+		datetime_ = datetime.datetime.combine(date.toPyDate(),time.toPyTime())
+		todo_app.update_task(self.item,title,datetime_)
 
 
 class Task(QWidget):
@@ -16,13 +80,13 @@ class Task(QWidget):
 		self.id = id_
 		self.item = item
 
+
 		self.title_widget = QLabel(self)
-		self.title_widget.setGeometry(QtCore.QRect(20, -10, 380, 41))
-		self.title_widget.setStyleSheet("color:rgb(184, 184, 184);font-size:18px")
-
-		self.status_widget = QCheckBox(self)
+		self.title_widget.setStyleSheet("color:rgb(184, 184, 184);font-size:18px;background:none;")
+		self.title_widget.setGeometry(QtCore.QRect(20, 0, 120, 41))
+		
+		self.status_widget = QCheckBox(self.title,self)
 		self.status_widget.setGeometry(QtCore.QRect(0, -10, 20, 41))
-
 
 		self.settings()
 
@@ -34,6 +98,7 @@ class Task(QWidget):
 		""" Set The Configurations """
 		self.title_widget.setText(self.title)
 		self.status_widget.setChecked(self.status)
+		self.title_widget.adjustSize()
 
 	def checked_task(self):
 		""" Set Done Task """
@@ -61,6 +126,7 @@ class Todo(QMainWindow):
 
 		# Signals
 		self.ui.insert.clicked.connect(self.insert_task)
+		self.ui.list.itemDoubleClicked.connect(self.item_clicked)
 		
 		self.fetch_tasks()
 
@@ -70,7 +136,7 @@ class Todo(QMainWindow):
 		self.ui.task.setPlaceholderText('your task to do')
 		self.setWindowTitle(self.title)
 		self.setFixedSize(500,500)
-		self.setWindowIcon(QtGui.QIcon('../tick.png'))
+		self.setWindowIcon(QtGui.QIcon('../images/tick.png'))
 
 
 	def create_table(self):
@@ -85,6 +151,12 @@ class Todo(QMainWindow):
 		"""
 		self.cursor.execute(query)
 		self.connection.commit()
+
+
+
+	def make_task_widget(self,title,status,datetime,id_,item):
+		task = Task(title,status,datetime,id_,item)
+		return task
 
 
 	def get_task(self,id):
@@ -102,11 +174,12 @@ class Todo(QMainWindow):
 		status = bool(task[2])
 		datetime = task[3]
 
-		item = QListWidgetItem()
-		item_widget = Task(title,status,datetime,id_,item)
-		item.setSizeHint(item_widget.sizeHint())
-		self.ui.list.addItem(item)
-		self.ui.list.setItemWidget(item,item_widget)
+		# item = QListWidgetItem()
+		# item_widget = self.make_task_widget(title,status,datetime,id_,item)
+		# item.setSizeHint(item_widget.sizeHint())
+		# self.ui.list.addItem(item)
+		# self.ui.list.setItemWidget(item,item_widget)
+		self.fetch_tasks()
 
 
 	def insert_to_database(self,title,datetime):
@@ -134,22 +207,26 @@ class Todo(QMainWindow):
 
 	def display_tasks(self,tasks):
 		""" Display All Task in Front-End """
-		for task in tasks:
-			id_ = task[0]
-			title = task[1]
-			status = bool(task[2])
-			datetime = task[3]
+		self.ui.list.clear()
+		if tasks:
+			for task in tasks:
+				id_ = task[0]
+				title = task[1]
+				status = bool(task[2])
+				datetime = task[3]
 
-			item = QListWidgetItem()
-			item_widget = Task(title,status,datetime,id_,item)
-			item.setSizeHint(item_widget.sizeHint())
+				item = QListWidgetItem()
+				item_widget = self.make_task_widget(title,status,datetime,id_,item)
+				item.setSizeHint(item_widget.sizeHint())
+				self.ui.list.addItem(item)
+				self.ui.list.setItemWidget(item,item_widget)
+		else:
+			item = QListWidgetItem('You Have no tasks')
 			self.ui.list.addItem(item)
-			self.ui.list.setItemWidget(item,item_widget)
-
 
 	def fetch_tasks(self):
 		""" Get All Active Tasks """
-		query = 'SELECT * FROM Task WHERE status=0 ORDER BY datetime;'
+		query = 'SELECT * FROM Task WHERE status=0 ORDER BY datetime DESC;'
 		self.cursor.execute(query)
 		tasks = self.cursor.fetchall()
 		self.display_tasks(tasks)
@@ -158,6 +235,9 @@ class Todo(QMainWindow):
 	def remove_task(self,row_item):
 		""" Remove task from list """
 		self.ui.list.takeItem(row_item)
+		if self.ui.list.count() == 0:
+			item = QListWidgetItem('You Have no tasks')
+			self.ui.list.addItem(item) 
 
 
 	def disable_task(self,task_id):
@@ -175,6 +255,57 @@ class Todo(QMainWindow):
 		task_id = task.id
 		self.disable_task(task_id)
 
+
+	def item_clicked(self,item):
+		try:
+			self.task_window = TaskWindow(item)
+			self.task_window.show()
+		except:
+			pass
+
+	def delete_task_db(self,task_id):
+		""" Delete task from databse """
+		query = f'DELETE From Task WHERE id={task_id}'
+		self.cursor.execute(query)
+		self.connection.commit()
+
+
+	def delete_task(self,item):
+		""" Delete Task from list and data base """
+		task = self.ui.list.itemWidget(item)
+		row_item = self.ui.list.row(item)
+
+		# delete from database
+		self.delete_task_db(task.id)
+
+		# delete from list
+		self.remove_task(row_item)
+
+
+	def update_task_db(self,task_id,title,datetime):
+		query = f'UPDATE Task SET title=\'{title}\',datetime=\'{datetime}\' WHERE id={task_id}'
+		self.cursor.execute(query)
+		self.connection.commit()
+
+
+	def update_task(self,item,title,datetime):
+		""" Update Task """
+		task = self.ui.list.itemWidget(item)
+		# update from database
+		self.update_task_db(task.id,title,datetime)
+		# edit item in list
+
+		# get the new task information and set widget to item
+		# new_task = self.get_task(task.id)
+		# # data
+		# id_ = new_task[0]
+		# title = new_task[1]
+		# status = bool(new_task[2])
+		# datetime = new_task[3]
+		# # new widget
+		# new_widget = self.make_task_widget(title,status,datetime,id_,item)
+		# self.ui.list.setItemWidget(item,new_widget)
+		self.fetch_tasks()
 
 
 if __name__ == '__main__':
